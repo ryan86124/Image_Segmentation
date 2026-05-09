@@ -1,0 +1,5 @@
+image_id,animal_type,animal_id,left_eye_center,right_eye_center,intra_eye_dist_px,inter_animal_dist_type,inter_dist_px
+coco_001.jpg,dog,dog_1,"(150, 220)","(210, 225)",60.21,none,0
+coco_001.jpg,dog,dog_2,"(450, 310)","(510, 315)",60.21,dog_1_R_to_dog_2_R,315.48
+coco_002.jpg,cat,cat_1,"(210, 180)","(240, 182)",30.07,none,0
+coco_002.jpg,cat,cat_2,"(500, 190)","(535, 195)",35.36,cat_1_R_to_cat_2_R,260.33
