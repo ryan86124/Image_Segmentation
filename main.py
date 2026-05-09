@@ -38,10 +38,10 @@ class AnimalMetrology:
             tuple: (animal_data_list, inter_individual_distance) or None if criteria not met.
         """
         # Run inference with a configurable confidence threshold
-        results = self.model(img_path, conf=float(os.getenv("CONF_THRESHOLD", 0.5)))[0]
+        result = self.model(img_path, conf=float(os.getenv("CONF_THRESHOLD", 0.5)))[0]
         
-        # 1. Filter results: Keep only detections belonging to self.animal_classes
-        animals = [r for r in results if int(r.boxes.cls) in self.animal_classes]
+        # 1. Filter result: Keep only detections belonging to self.animal_classes
+        animals = [r for r in result if int(r.boxes.cls) in self.animal_classes]
         
         # Skip processing if fewer than 2 animals are detected
         if len(animals) < 2:
@@ -83,9 +83,25 @@ class AnimalMetrology:
 # Main Execution block
 if __name__ == "__main__":
     detector = AnimalMetrology()
+    input_path = "data/input/animals.jpg"
+    output_csv = "result/metrology_results.csv"
     
-    # Usage Example:
-    # results = detector.run_inference("test_image.jpg")
-    # if results:
-    #     animal_info, distance = results
-    #     print(f"Calculated Inter-individual distance: {distance} px")
+    # 確保輸出目錄存在
+    os.makedirs("result", exist_ok=True)
+
+    print(f"Processing image: {input_path}...")
+    result = detector.run_inference(input_path)
+
+    if result:
+        animal_info, inter_dist = result
+        print(f"Measurement successful! Distance between right eyes of two animals: {inter_dist} px")
+
+        # write result to csv
+        with open(output_csv, "w") as f:
+            f.write("animal_id,intra_eye_dist_px,inter_individual_dist_px\n")
+            for anim in animal_info:
+                f.write(f"{anim['id']},{anim['intra_dist']},{inter_dist if anim['id'] == 0 else ''}\n")
+        
+        print(f"Data saved to: {output_csv}")
+    else:
+        print("Measurement failed: Fewer than 2 animals detected.")
